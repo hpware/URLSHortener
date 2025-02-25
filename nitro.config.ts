@@ -9,10 +9,6 @@ export default defineNitroConfig({
     default: {
       connector: "sqlite",
       options: {name: "db"}
-    },
-    users: {
-      connector: 'postgresql',
-      url: process.env.postgres,
     }
   }
 });
