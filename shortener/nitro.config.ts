@@ -5,10 +5,4 @@ export default defineNitroConfig({
   experimental: {
     database: true
   },
-  database: {
-    default: {
-      connector: "sqlite",
-      options: {name: "db"}
-    }
-  }
 });
