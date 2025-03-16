@@ -1,0 +1,63 @@
+---
+import Layout from "../layouts/Main.astro";
+---
+
+<Layout>
+  <noscript
+    >This webpage requires turning on Javascipt, if you really worry about the
+    conntents on this page. This project is <a
+      href="https://github.com/hpware/URLSHortener">open source on github</a
+    >.</noscript
+  >
+  <div class="login">
+    <form id="login">
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+      <label for="pwd">密碼</label>
+      <input type="password" id="pwd" required />
+      <button>登入</button>
+    </form>
+    <p id="error" class="error"></p>
+  </div>
+</Layout>
+
+<script>
+  document.getElementById("login").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const pwdInput = document.getElementById("pwd") as HTMLInputElement;
+    sendCreds(emailInput.value, pwdInput.value);
+  });
+  async function sendCreds(email: string, pwd: string) {
+    try {
+        const sha512pwd1 = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-512", new TextEncoder().encode(pwd))));
+        const sha512pwd = sha512pwd1.map(b => b.toString(16).padStart(2, '0')).join('');
+        const req = await fetch("/api/manage-web/auth", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user: email,
+                password: sha512pwd,
+            })
+        })
+        const res = await req.json();
+        if (res.logged = true) {
+            window.location.href="/manage/"
+        } else {
+            document.getElementById("error").innerText = "Incorrect Password"
+        }
+    } catch (e) {
+        document.getElementById("error").innerText = "Client side or Server side error."
+    }
+  }
+</script>
+
+<style>
+    .error {
+        padding: 0;
+        gap:0;
+        margin: 0;
+    }
+</style>
