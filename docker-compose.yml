@@ -1,12 +1,12 @@
 ---
 services:
-  nginx: 
+  nginx:
     image: nginx
     ports:
       - 7500:80
       # Use the line below to lock it down to only the host can use it, if you don't have a firewall setup like ufw.
       #- 127.0.0.1:7500:80
-    volumes: 
+    volumes:
       - ./data/nginx:/etc/nginx/
   shortener:
     image: shortener

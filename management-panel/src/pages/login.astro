@@ -30,34 +30,41 @@ import Layout from "../layouts/Main.astro";
   });
   async function sendCreds(email: string, pwd: string) {
     try {
-        const sha512pwd1 = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-512", new TextEncoder().encode(pwd))));
-        const sha512pwd = sha512pwd1.map(b => b.toString(16).padStart(2, '0')).join('');
-        const req = await fetch("/api/manage-web/auth", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user: email,
-                password: sha512pwd,
-            })
-        })
-        const res = await req.json();
-        if (res.logged = true) {
-            window.location.href="/manage/"
-        } else {
-            document.getElementById("error").innerText = "Incorrect Password"
-        }
+      const sha512pwd1 = Array.from(
+        new Uint8Array(
+          await crypto.subtle.digest("SHA-512", new TextEncoder().encode(pwd)),
+        ),
+      );
+      const sha512pwd = sha512pwd1
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      const req = await fetch("/api/manage-web/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: email,
+          password: sha512pwd,
+        }),
+      });
+      const res = await req.json();
+      if ((res.logged = true)) {
+        window.location.href = "/manage/";
+      } else {
+        document.getElementById("error").innerText = "Incorrect Password";
+      }
     } catch (e) {
-        document.getElementById("error").innerText = "Client side or Server side error."
+      document.getElementById("error").innerText =
+        "Client side or Server side error.";
     }
   }
 </script>
 
 <style>
-    .error {
-        padding: 0;
-        gap:0;
-        margin: 0;
-    }
+  .error {
+    padding: 0;
+    gap: 0;
+    margin: 0;
+  }
 </style>

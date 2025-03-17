@@ -10,19 +10,18 @@ export default defineNitroConfig({
     route: "/_docs/openapi.json",
     production: "prerender",
     meta: {
-      title: 'URL Shortener API Documentation',
-      description: 'Access Scalar using /docs and Swagger using /docs/swagger',
-      version: '1.0',
+      title: "URL Shortener API Documentation",
+      description: "Access Scalar using /docs and Swagger using /docs/swagger",
+      version: "1.0",
     },
     ui: {
       scalar: {
         route: "/docs/",
         theme: "blue",
-        
       },
       swagger: {
-        route: "/docs/swagger"
-      }
-    }
-  },  
+        route: "/docs/swagger",
+      },
+    },
+  },
 });
