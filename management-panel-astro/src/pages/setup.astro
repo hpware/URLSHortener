@@ -1,0 +1,152 @@
+---
+import Layout from "../layouts/Main.astro";
+---
+
+<Layout>
+  <div class="registration-flow">
+    <div id="step1" class="step">
+      <h1>Hello user</h1>
+      <h2>Nice to meet you.</h2>
+      <form id="nameForm">
+        <label for="name">What is your name?</label>
+        <input type="text" id="name" placeholder="Ex: Howard" required />
+        <button type="submit">Next</button>
+        <p id="nameError" class="error"></p>
+      </form>
+    </div>
+
+    <div id="step2" class="step hidden">
+      <h1 id="nameGreeting">Hello</h1>
+      <h2>Let's create your account</h2>
+      <form id="emailForm">
+        <label for="email">What is your email address?</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Ex: user@example.com"
+          required
+        />
+        <button type="submit">Next</button>
+        <p id="emailError" class="error"></p>
+      </form>
+    </div>
+
+    <div id="step3" class="step hidden">
+      <h1 id="finalGreeting">Hello</h1>
+      <h2>Let's set your Password</h2>
+      <form id="passwordForm">
+        <label for="password">Choose a password</label>
+        <input type="password" id="password" placeholder="Password" required />
+        <label for="confirmPassword">Confirm password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="Confirm password"
+          required
+        />
+        <button type="submit">Complete Registration</button>
+        <p id="passwordError" class="error"></p>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Form data storage
+  const userData = {
+    name: "",
+    email: "",
+    password: "",
+  };
+
+  // Step 1: Name collection
+  document.getElementById("nameForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nameInput = document.getElementById("name") as HTMLInputElement;
+    userData.name = nameInput.value;
+
+    // Update greeting in next step
+    document.getElementById("nameGreeting").textContent =
+      `Hello ${userData.name}`;
+
+    // Hide step 1, show step 2
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+  });
+
+  // Step 2: Email collection
+  document.getElementById("emailForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    userData.email = emailInput.value;
+
+    // Update greeting in next step
+    document.getElementById("finalGreeting").textContent =
+      `Hello ${userData.name}`;
+
+    // Hide step 2, show step 3
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step3").classList.remove("hidden");
+  });
+
+  // Step 3: Password collection and final submission
+  document
+    .getElementById("passwordForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const passwordInput = document.getElementById(
+        "password",
+      ) as HTMLInputElement;
+      const confirmInput = document.getElementById(
+        "confirmPassword",
+      ) as HTMLInputElement;
+      const errorElement = document.getElementById("passwordError");
+
+      // Password validation
+      if (passwordInput.value !== confirmInput.value) {
+        errorElement.textContent = "Passwords don't match";
+        return;
+      }
+
+      userData.password = passwordInput.value;
+
+      try {
+        // Submit complete registration data
+        const req = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        const res = await req.json();
+        if (res.success === true) {
+          // Redirect to dashboard or show success
+          window.location.href = "/manage/";
+        } else {
+          errorElement.textContent =
+            "Registration failed: " + (res.message || "Server error");
+        }
+      } catch (e) {
+        errorElement.textContent = "An error occurred during registration";
+      }
+    });
+</script>
+
+<style>
+  .step {
+    transition: opacity 0.3s ease;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .error {
+    padding: 0;
+    gap: 0;
+    margin: 0;
+    color: rgb(141, 0, 0);
+  }
+</style>
