@@ -19,7 +19,7 @@ export default defineConfig({
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
       },
-      basename: "/manage"
+      basename: "/manage",
     }),
     tsconfigPaths(),
   ],

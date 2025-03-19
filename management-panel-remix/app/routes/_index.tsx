@@ -8,9 +8,9 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
-export async function loader({ request } : LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   if (loggedin === true) {
-    return redirect("/panel")
+    return redirect("/panel");
   } else {
     return redirect("/login");
   }
@@ -18,8 +18,15 @@ export async function loader({ request } : LoaderFunctionArgs) {
 export default function Index() {
   return (
     <div>
-      <h3>If you are seeing this page, that means that something is wrong on the server, please contact the server owner, if you are the server owner, please look at the docker logs.</h3>
-      <h4>If nothing is working, file a issue on the GitHub repo or email me at global@yuanhau.com</h4>
+      <h3>
+        If you are seeing this page, that means that something is wrong on the
+        server, please contact the server owner, if you are the server owner,
+        please look at the docker logs.
+      </h3>
+      <h4>
+        If nothing is working, file a issue on the GitHub repo or email me at
+        global@yuanhau.com
+      </h4>
     </div>
-  )
+  );
 }
