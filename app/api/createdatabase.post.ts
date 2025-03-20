@@ -3,7 +3,7 @@ import d from "../db";
 export default defineEventHandler(async (event) => {
   let dbcreated = false;
   setHeader(event, "Content-Type", "application/json");
-  const preventsql = await d`
+  const preventsql = await sql`
   create table prevent (
     prevent text not null primary key,
   )
@@ -22,30 +22,30 @@ export default defineEventHandler(async (event) => {
 });
 
 async function runsql() {
-  const query = await d`
+  const query = await sql`
   create table domains (
     domain text not null primary key,
     default boolean not null,
     created_at timestamp with time zone default current_timestamp,
-  )
+  );
   create table links (
       slug text not null primary key,
       domain txt not null,
       dest text not null,
       user_id text not null,
       created_at timestamp with time zone default current_timestamp
-  )
+  );
   create table users (
       user_id text not null primary key,
       name text not null,
       email text not null unique,
       pwd text not null,
       created_at timestamp with time zone default current_timestamp
-  )
+  );
   create table apikeys (
       apikeys text not null primary key,
       created_user text not null,
       created_at timestamp with time zone default current_timestamp
-  )`.execute();
+  );`.execute();
   return query;
 }
