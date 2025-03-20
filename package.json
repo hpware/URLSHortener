@@ -1,8 +1,17 @@
 {
+  "private": true,
   "scripts": {
-    "clean": "prettier . --write"
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "prepare": "nitro prepare",
+    "preview": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "better-sqlite3": "^11.8.1",
+    "nitropack": "latest"
   },
   "dependencies": {
-    "prettier-plugin-astro": "^0.14.1"
+    "pg": "^8.13.3",
+    "postgres": "^3.4.5"
   }
 }
