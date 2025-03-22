@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     setHeader(event, "Content-Type", "application/json");
     const date = new Date();
     // Body using the letter b for well, idk.
-    const b : Promise<bodyi> =  await readBody(event);
+    const b : bodyi =  await readBody(event);
     if (!b) {
       return {
         status: "error",

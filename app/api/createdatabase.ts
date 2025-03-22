@@ -53,8 +53,8 @@ async function runsql() {
   `.execute();
   return {
     domains_command: domains,
-    links_command: domains,
-    users_command: domains,
-    apikeys_command: domains,
+    links_command: links,
+    users_command: users,
+    apikeys_command: apikeys,
   };
 }
