@@ -1,51 +1,60 @@
 import d from "../db";
 
 export default defineEventHandler(async (event) => {
-  let dbcreated = false;
   setHeader(event, "Content-Type", "application/json");
-  const preventsql = await d`
-  create table prevent (
-    prevent text not null primary key,
-  )
-  `.execute().error(dbcreated = true);
-  if (dbcreated = false) {
+  try {
+    const result = await runsql();
     return {
-      sql: runsql(),
+      sql: result,
       status: "success",
-    }
-  } else {
+    };
+  } catch (error) {
+    console.error('Error creating tables:', error);
     return {
-      sql: "Database created before!",
+      sql: null,
       status: "error",
-    }
+      message: error.message,
+    };
   }
 });
 
 async function runsql() {
-  const query = await d`
-  create table domains (
-    domain text not null primary key,
-    default boolean not null,
-    created_at timestamp with time zone default current_timestamp,
-  );
-  create table links (
+  const domains = await d`
+    create table domains (
+      domain text not null primary key,
+      isdefault boolean not null,
+      created_at timestamp with time zone default current_timestamp
+    )
+    `
+    const links = await d`
+    create table links (
       slug text not null primary key,
-      domain txt not null,
+      domain text not null,
       dest text not null,
       user_id text not null,
       created_at timestamp with time zone default current_timestamp
-  );
-  create table users (
+    );
+    `
+    const users = await d`
+    create table users (
       user_id text not null primary key,
       name text not null,
       email text not null unique,
       pwd text not null,
       created_at timestamp with time zone default current_timestamp
-  );
-  create table apikeys (
+    );
+    ` 
+    const apikeys = await d`
+    create table apikeys (
       apikeys text not null primary key,
       created_user text not null,
       created_at timestamp with time zone default current_timestamp
-  );`.execute();
-  return query;
+    );
+  `.execute();
+  return {
+    domains_command: domains,
+    links_command: domains,
+    users_command: domains,
+    apikeys_command: domains,
+  };
 }
