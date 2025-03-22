@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
           message: "Missing required fields: slug, domain, dest, and auth are required"
         };
       }
-    const checklink = d`
+    const checklink = await d`
     
     `.execute();
     console.log(checklink);
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     const checkslug = await d`
       select * from links
       where slug='${b.slug}';
-    `.execute();
+    `
     if (checkslug) {
       return {
         status: "error",
@@ -35,11 +35,11 @@ export default defineEventHandler(async (event) => {
     }
     const fetchUser = await d`
       
-    `.execute();
+    `
     console.log(fetchUser);
     const createlink = await d`
       insert into links (slug, domain, dest, user_id, created_at)
       values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${date.getUTCDate()}");
-    `.execute();
+    `
     console.log(createlink);
 });
