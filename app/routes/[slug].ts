@@ -6,8 +6,10 @@ export default defineEventHandler(async (event) => {
   //const check = await d`
 
   //`.execute();
+  const getdate = date();
+  console.log(getdate);
   return {
     slug: slug,
-    date: date()
+    date: getdate
   };
 });
