@@ -26,16 +26,24 @@ export default defineEventHandler(async (event) => {
           message: "Missing required fields: slug, domain, dest, and auth are required"
         };
       }
+      const fetchUser = await d`
+        select created_user from apikeys
+        where apikeys=${b.auth};
+      `
+      console.log(fetchUser);
     if (!b.domain) {
       const domainreq = await d`
+      select domain from domains
+      where isdefault=true;
       `
-
+      const domain = domainreq;
     } else {
       const domain = b.domain;
     }
     const checklink = d`
-    
-    `.execute();
+      select * from links
+      where dest=${b.dest};
+    `
     console.log(checklink);
     if (checklink) {
       return {
@@ -53,10 +61,6 @@ export default defineEventHandler(async (event) => {
         message: "This slug has been used before, and therefore can not be used again. or you can just delete it I guess."
       }
     }
-    const fetchUser = await d`
-      
-    `
-    console.log(fetchUser);
     const createlink = await d`
       insert into links (slug, domain, dest, user_id, created_at)
       values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${date.getUTCDate()}");
