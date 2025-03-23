@@ -8,6 +8,9 @@ interface bodyi {
   dest: string,
   auth: string,
 }
+
+let domain = "";
+
 export default defineEventHandler(async (event) => {
     setHeader(event, "Content-Type", "application/json");
     // Body using the letter b for well, idk.
@@ -35,9 +38,9 @@ export default defineEventHandler(async (event) => {
       select domain from domains
       where isdefault=true;
       `
-      const domain = domainreq;
+      domain = String(domainreq);
     } else {
-      const domain = b.domain;
+      domain = b.domain;
     }
     const checklink = d`
       select * from links

@@ -1,6 +1,6 @@
 import d from "../db";
 import { uuidv7 } from "uuidv7";
-import date from "~/date";
+import de from "~/date";
 
 export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/json");
@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
 });
 
 async function runsql() {
+  const date = await de();
+
   const domains = await d`
     create table domains (
       domain text not null primary key,
@@ -53,10 +55,14 @@ async function runsql() {
       created_at timestamp with time zone default current_timestamp
     );
   `
-    const dateValue = await date();
+    const databasechecks = await d`
+    create table databasechecks (
+      date text not null primary key
+    )
+    `
     const createdefaultuser = await d`
     insert into users (user_id, name, email, pwd, created_at)
-    values(${uuidv7()}, 'user', 'User', 'user@example.com', ${dateValue});
+    values(${uuidv7()}, 'user', 'User', 'user@example.com', ${date});
     `
   return {
     domains_command: domains,
