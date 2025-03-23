@@ -1,5 +1,6 @@
 import d from "../db";
 import { uuidv7 } from "uuidv7";
+import date from "~/date";
 
 export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/json");
@@ -54,7 +55,7 @@ async function runsql() {
   `
     const createdefaultuser = await d`
     insert into users (user_id, name, email, pwd, created_at)
-    values("${uuidv7()}", "user", "User", "user@example.com", "${new Date().getUTCDate()}");
+    values("${uuidv7()}", "user", "User", "user@example.com", "${date}");
     `
   return {
     domains_command: domains,

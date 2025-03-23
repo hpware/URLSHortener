@@ -1,6 +1,6 @@
 // d is the short term for db or sql
 import d from "~/db";
-
+import date from "~/date";
 // Interface
 interface bodyi {
   slug: string,
@@ -10,7 +10,6 @@ interface bodyi {
 }
 export default defineEventHandler(async (event) => {
     setHeader(event, "Content-Type", "application/json");
-    const date = new Date();
     // Body using the letter b for well, idk.
     const b : bodyi =  await readBody(event);
     if (!b) {
@@ -27,7 +26,7 @@ export default defineEventHandler(async (event) => {
         };
       }
       const fetchUser = await d`
-        select created_user from apikeys
+        select * from apikeys
         where apikeys=${b.auth};
       `
       console.log(fetchUser);
@@ -63,7 +62,7 @@ export default defineEventHandler(async (event) => {
     }
     const createlink = await d`
       insert into links (slug, domain, dest, user_id, created_at)
-      values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${date.getUTCDate()}");
+      values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${date}");
     `
     console.log(createlink);
 });
