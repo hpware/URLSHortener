@@ -53,9 +53,10 @@ async function runsql() {
       created_at timestamp with time zone default current_timestamp
     );
   `
+    const dateValue = await date();
     const createdefaultuser = await d`
     insert into users (user_id, name, email, pwd, created_at)
-    values("${uuidv7()}", "user", "User", "user@example.com", "${date}");
+    values(${uuidv7()}, 'user', 'User', 'user@example.com', ${dateValue});
     `
   return {
     domains_command: domains,

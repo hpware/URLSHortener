@@ -1,4 +1,5 @@
 import d from "../db";
+import date from "~/date";
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
@@ -7,6 +8,6 @@ export default defineEventHandler(async (event) => {
   //`.execute();
   return {
     slug: slug,
-    date: date
+    date: date()
   };
 });
