@@ -1,6 +1,5 @@
 import d from "../db";
 import { uuidv7 } from "uuidv7";
-import de from "~/date";
 
 export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/json");
@@ -20,8 +19,9 @@ export default defineEventHandler(async (event) => {
   }
 });
 
+
 async function runsql() {
-  const date = await de();
+  const date = new Date().toISOString()
 
   const domains = await d`
     create table domains (

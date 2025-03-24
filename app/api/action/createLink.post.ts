@@ -1,6 +1,5 @@
 // d is the short term for db or sql
 import d from "~/db";
-import date from "~/date";
 // Interface
 interface bodyi {
   slug: string,
@@ -63,7 +62,7 @@ export default defineEventHandler(async (event) => {
         message: "This slug has been used before, and therefore can not be used again. or you can just delete it I guess."
       }
     }
-    const getdate = date()
+    const getdate = new Date().toISOString()  
     const createlink = await d`
       insert into links (slug, domain, dest, user_id, created_at)
       values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${getdate}");

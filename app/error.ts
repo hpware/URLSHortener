@@ -106,7 +106,6 @@ export default defineNitroErrorHandler(async (error, event) => {
                 </div>
 
                 <script>
-                    // Remove sensitive information from view in production
                     if (window.location.hostname !== 'localhost') {
                         document.querySelectorAll('.details').forEach(el => {
                             if (!el.textContent.includes('Error Details:')) {
