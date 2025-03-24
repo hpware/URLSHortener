@@ -172,6 +172,9 @@ ${isDev ? `\nStack Trace: ${error.stack}` : ''}`)}'">
                             Report Issue
                         </button>
                     </div>
+                    <footer style="text-align:center;padding: 1px;gap:0;border:0;">
+                        <p>This page is made using GitHub Copilot</p>
+                    </footer>
                 </div>
 
                 <script>

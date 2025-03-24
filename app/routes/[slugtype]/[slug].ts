@@ -1,8 +1,15 @@
+import d from "~/db";
+
 export default defineEventHandler(async (event) => {
-  const slugtype = getRouterParam(event, "slugtype");
   const slug = getRouterParam(event, "slug");
+  const check = await d`
+  select dest from links
+  where slug=${slug}
+  `
+  const date = new Date().toISOString();
   return {
-    slugtype: slugtype,
     slug: slug,
+    date: date,
+    db: check
   };
 });

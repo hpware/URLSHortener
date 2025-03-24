@@ -62,10 +62,33 @@ export default defineEventHandler(async (event) => {
         message: "This slug has been used before, and therefore can not be used again. or you can just delete it I guess."
       }
     }
+    const logactivty = await d`
+    create table ${slug} (
+      uuid text not null primary key,
+      user_agent text not null,
+      ip_addr text not null,
+      params text not null,
+      click_timestamp timestamp with time zone default current_timestamp
+    )`
     const getdate = new Date().toISOString()  
-    const createlink = await d`
-      insert into links (slug, domain, dest, user_id, created_at)
-      values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${getdate}");
-    `
+    //const createlink = await d`
+    //  insert into links (slug, domain, dest, user_id, created_at)
+    //  values("${b.slug}", "${b.domain}", "${b.dest}", "${fetchUser.id}", "${getdate}");
+    //`
     console.log(createlink);
+    return {
+      date:getdate,
+      data: {
+        slug: b.slug,
+        domain: b.domain,
+        dest: b.dest,
+      },
+      database: {
+        fetchUser: fetchUser,
+        domainreq: domain,
+        checkslug: checkslug,
+        logactivty: logactivty,
+        createlink: "// TODO"
+      }
+    }
 });
