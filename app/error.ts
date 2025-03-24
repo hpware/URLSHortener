@@ -1,10 +1,30 @@
 export default defineNitroErrorHandler(async (error, event) => {
     setHeader(event, "Content-Type", "text/html");
     const statusCode = error.statusCode || 500;
-    const title = statusCode === 404 ? "Page Not Found" : "Something Went Wrong";
-    const message = statusCode === 404 
-        ? "The URL you're looking for doesn't exist" 
-        : "We're experiencing technical difficulties";
+    const isDev = process.env.NODE_ENV === 'development';
+    const allowedHosts = ['localhost', 'dev.zeabur.app'];
+    
+    // Enhanced error messages
+    const errorMessages = {
+        404: {
+            title: "Page Not Found",
+            message: "The URL you're looking for doesn't exist"
+        },
+        500: {
+            title: "Server Error",
+            message: "We're experiencing technical difficulties"
+        },
+        403: {
+            title: "Access Denied",
+            message: "You don't have permission to access this resource"
+        }
+    };
+    
+    const { title, message } = errorMessages[statusCode] || errorMessages[500];
+    
+    const sanitizeErrorMessage = (msg: string) => {
+        return isDev ? msg : 'An error occurred';
+    };
 
     const html = `
         <!DOCTYPE html>
@@ -12,31 +32,59 @@ export default defineNitroErrorHandler(async (error, event) => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="robots" content="noindex, nofollow">
                 <title>${title} - Error ${statusCode}</title>
                 <style>
+                    :root {
+                        --primary-color: #4299e1;
+                        --error-color: #e53e3e;
+                        --bg-color: #f4f5f7;
+                        --text-color: #333;
+                    }
+                    
+                    @media (prefers-color-scheme: dark) {
+                        :root {
+                            --primary-color: #63b3ed;
+                            --error-color: #fc8181;
+                            --bg-color: #1a202c;
+                            --text-color:rgb(0, 0, 0);
+                        }
+                        body {
+                            background: var(--bg-color);
+                            color: var(--text-color);
+                        }
+                        .error-container {
+                            background: #2d3748;
+                        }
+                        .details {
+                            background: #1a202c;
+                        }
+                    }
+                    
                     body {
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        background: #f4f5f7;
+                        background: var(--bg-color);
                         margin: 0;
-                        padding: 0;
+                        padding: 1rem;
                         display: flex;
                         justify-content: center;
                         align-items: center;
                         min-height: 100vh;
-                        color: #333;
+                        color: var(--text-color);
                     }
                     .error-container {
                         background: white;
                         padding: 2rem;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        border-radius: 12px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                         max-width: 600px;
-                        width: 90%;
+                        width: 100%;
+                        font-color: black;
                     }
                     h1 {
                         margin: 0;
                         font-size: 2.5rem;
-                        color: #e53e3e;
+                        color: var(--error-color);
                     }
                     .status-code {
                         font-size: 1.2rem;
@@ -46,34 +94,46 @@ export default defineNitroErrorHandler(async (error, event) => {
                     .message {
                         font-size: 1.1rem;
                         margin: 1rem 0;
+                        line-height: 1.5;
                     }
                     .details {
                         background: #f8f9fa;
                         padding: 1rem;
-                        border-radius: 4px;
+                        border-radius: 8px;
                         margin: 1rem 0;
-                        font-family: monospace;
+                        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
                         font-size: 0.9rem;
                         overflow-x: auto;
                     }
+                    .button-group {
+                        display: flex;
+                        gap: 1rem;
+                        margin-top: 1.5rem;
+                        flex-wrap: wrap;
+                    }
                     button {
-                        background: #4299e1;
+                        background: var(--primary-color);
                         color: white;
                         border: none;
                         padding: 0.75rem 1.5rem;
-                        border-radius: 4px;
+                        border-radius: 6px;
                         cursor: pointer;
                         font-size: 1rem;
-                        transition: background 0.2s;
+                        transition: all 0.2s ease;
+                        flex: 1;
+                        min-width: 140px;
                     }
                     button:hover {
-                        background: #3182ce;
+                        transform: translateY(-1px);
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                     }
                     .back-link {
-                        display: block;
-                        margin-top: 1rem;
-                        color: #4299e1;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        color: var(--primary-color);
                         text-decoration: none;
+                        font-weight: 500;
                     }
                     .back-link:hover {
                         text-decoration: underline;
@@ -86,32 +146,39 @@ export default defineNitroErrorHandler(async (error, event) => {
                     <div class="status-code">Error ${statusCode}</div>
                     <p class="message">${message}</p>
                     
-                    <div class="details">
-                        <strong>Error Details:</strong>
-                        <pre>${error.message || 'No additional details available'}</pre>
-                    </div>
-
-                    ${process.env.NODE_ENV === 'development' ? `
+                    ${isDev || allowedHosts.includes(event.node.req.headers.host || '') ? `
                         <div class="details">
-                            <strong>Stack Trace:</strong>
-                            <pre>${error.stack || 'No stack trace available'}</pre>
+                            <strong>Error Details:</strong>
+                            <pre>${sanitizeErrorMessage(error.message) || 'No additional details available'}</pre>
                         </div>
+                        
+                        ${isDev ? `
+                            <div class="details">
+                                <strong>Stack Trace:</strong>
+                                <pre>${error.stack || 'No stack trace available'}</pre>
+                            </div>
+                        ` : ''}
                     ` : ''}
                     
-                    <button onclick="window.location.href='mailto:hw@yuanhau.com?subject=Error%20Report&20For%20dev.zeabur.app&body=Error%20on%20page:%20${encodeURIComponent(event.path)}%0D%0AError%20code:%20${statusCode}%0D%0ATimestamp:%20${new Date().toISOString()}%0D%0AError%20Stack:%20${error.stack}%0D%0AError%20Message:%20${error.message}'">
-                        Report this issue
-                    </button>
-                    
-                    <a onclick="window.location.back" href="#" class="back-link">← Return to homepage</a>
+                    <div class="button-group">
+                        <button onclick="history.back()">← Go Back</button>
+                        <button onclick="window.location.href='mailto:hw@yuanhau.com?subject=${encodeURIComponent(`Error Report - ${statusCode} on ${event.node.req.headers.host}`)}&body=${encodeURIComponent(`Error Details:
+                            
+Page: ${event.node.req.url}
+Error Code: ${statusCode}
+Timestamp: ${new Date().toISOString()}
+User Agent: ${event.node.req.headers['user-agent']}
+${isDev ? `\nStack Trace: ${error.stack}` : ''}`)}'">
+                            Report Issue
+                        </button>
+                    </div>
                 </div>
 
                 <script>
-                    if (window.location.hostname !== 'localhost' || window.location.hostname !== "dev.zeabur.app") {
-                        document.querySelectorAll('.details').forEach(el => {
-                            if (!el.textContent.includes('Error Details:')) {
-                                el.style.display = 'none';
-                            }
-                        });
+                    // Prevent error details from showing in production except on allowed hosts
+                    const allowedHosts = ${JSON.stringify(allowedHosts)};
+                    if (!allowedHosts.includes(window.location.hostname)) {
+                        document.querySelectorAll('.details').forEach(el => el.remove());
                     }
                 </script>
             </body>
