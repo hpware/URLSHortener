@@ -1,11 +1,10 @@
 import d from "~/db";
-import de from "~/date";
 
 
 export default defineEventHandler (async (event) => {
     let dbwrite = false;
     let dbread = false;
-    const date = await de();
+    const date = new Date().toISOString();
     const sqlwrite = await d`
     insert into databasecheck(date)
     values(${date});

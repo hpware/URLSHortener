@@ -98,15 +98,15 @@ export default defineNitroErrorHandler(async (error, event) => {
                         </div>
                     ` : ''}
                     
-                    <button onclick="window.location.href='mailto:admin@example.com?subject=Error%20Report&body=Error%20on%20page:%20${encodeURIComponent(event.path)}%0D%0AError%20code:%20${statusCode}%0D%0ATimestamp:%20${new Date().toISOString()}'">
+                    <button onclick="window.location.href='mailto:hw@yuanhau.com?subject=Error%20Report&20For%20dev.zeabur.app&body=Error%20on%20page:%20${encodeURIComponent(event.path)}%0D%0AError%20code:%20${statusCode}%0D%0ATimestamp:%20${new Date().toISOString()}%0D%0AError%20Stack:%20${error.stack}%0D%0AError%20Message:%20${error.message}'">
                         Report this issue
                     </button>
                     
-                    <a href="/" class="back-link">← Return to homepage</a>
+                    <a onclick="window.location.back" href="#" class="back-link">← Return to homepage</a>
                 </div>
 
                 <script>
-                    if (window.location.hostname !== 'localhost') {
+                    if (window.location.hostname !== 'localhost' || window.location.hostname !== "dev.zeabur.app") {
                         document.querySelectorAll('.details').forEach(el => {
                             if (!el.textContent.includes('Error Details:')) {
                                 el.style.display = 'none';
